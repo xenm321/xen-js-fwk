@@ -1,8 +1,8 @@
 import { withoutNulls } from './utils/arrays';
 import { DomTypes, Props, VNode } from './models/vNode';
 
-function mapTextNodes(children: VNode[]): VNode[] {
-  return children.map((child) =>
+function mapTextNodes(children: VNode[] | string[]): VNode[] {
+  return children.map((child: VNode | string) =>
     typeof child === 'string' ? hString(child) : child
   );
 }
@@ -18,7 +18,7 @@ export function hFragment(vNodes: VNode[]): VNode {
   };
 }
 
-export function h(tag: string, props:  Props = {}, children: VNode[] = []): VNode {
+export function h(tag: string, props: Props = {}, children: VNode[] | string[] = []): VNode {
   return {
     tag,
     props,
