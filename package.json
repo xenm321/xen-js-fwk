@@ -1,12 +1,16 @@
 {
   "name": "js-fwk-examples",
   "version": "1.0.0",
+  "private": true,
   "main": "index.js",
+  "workspaces": [
+    "packages/runtime"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve:examples": "npx http-server . -o ./examples/ -bg"
   },
   "keywords": [],
-  "author": "",
+  "author": "xen",
   "license": "ISC",
   "description": ""
 }

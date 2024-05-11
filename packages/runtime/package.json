@@ -1,6 +1,6 @@
 {
   "name": "xen-js-fwk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A frontend framework to teach web developers how frontend frameworks work.",
   "exports": "./dist/xen-js-fwk.js",
   "main": "dist/xen-js-fwk.js",
