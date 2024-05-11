@@ -1,4 +1,5 @@
-import { h } from 'https://unpkg.com/xen-js-fwk@1.0.1';
+//import { h } from 'https://unpkg.com/xen-js-fwk@1.0.1';
+import { h } from '../../dist/xen-js-fwk.min.js';
 
 function CreateTodo() {
   return h('div', {}, [
