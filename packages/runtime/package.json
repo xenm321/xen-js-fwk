@@ -1,0 +1,38 @@
+{
+  "name": "xen-js-fwk",
+  "version": "1.0.0",
+  "description": "A frontend framework to teach web developers how frontend frameworks work.",
+  "exports": "./dist/xen-js-fwk.js",
+  "main": "dist/xen-js-fwk.js",
+  "module": "dist/xen-js-fwk.js",
+  "files": [
+    "dist/xen-js-fwk.js",
+    "dist/xen-js-fwk.min.js"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "prepack": "npm run build"
+  },
+  "author": "Xen",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@vitest/coverage-v8": "^1.6.0",
+    "eslint": "^9.2.0",
+    "jsdom": "^24.0.0",
+    "rollup": "^4.17.2",
+    "rollup-plugin-cleanup": "^3.2.1",
+    "rollup-plugin-filesize": "^10.0.0",
+    "vitest": "^1.3.0"
+  },
+  "dependencies": {
+    "fast-deep-equal": "^3.1.3"
+  }
+}
