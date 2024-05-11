@@ -13,6 +13,16 @@
     "comma-dangle": ["warn"],
     "semi": "warn",
     "no-console": "off",
-    "@typescript-eslint/no-explicit-any": ["off"]
+    "@typescript-eslint/no-explicit-any": ["off"],
+    "@typescript-eslint/type-annotation-spacing": "warn",
+    "object-curly-spacing": ["warn", "always"],
+    "array-bracket-spacing": ["warn", "always"],
+    "keyword-spacing": ["warn"],
+    "space-infix-ops": ["warn"],
+    "comma-spacing": ["warn"],
+    "space-before-blocks": ["warn"],
+    "switch-colon-spacing": ["warn"],
+    "key-spacing": ["warn"],
+    "no-multi-spaces": ["warn"]
   }
 }

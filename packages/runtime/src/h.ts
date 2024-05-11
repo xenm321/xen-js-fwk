@@ -7,6 +7,13 @@ function mapTextNodes(children: VNode[] | string[]): VNode[] {
   );
 }
 
+const a = { b: 1 };
+const b = [ 1, 2, 3, 4 ];
+if (a.b === 1) {
+  console.log(a);
+  console.log(b);
+}
+
 export function hString(str: string): VNode {
   return { type: DomTypes.TEXT, value: str };
 }
