@@ -6,7 +6,12 @@ export enum DomTypes {
 
 type EventHandlers = Record<string, () => void>;
 
-export type Props = Record<string, string | number | EventHandlers>;
+type PropValue = string | number | EventHandlers;
+
+export type Props = {
+  [k: string]: PropValue;
+  on?: EventHandlers;
+};
 
 export interface VNode {
   type: DomTypes;

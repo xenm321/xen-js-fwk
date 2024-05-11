@@ -18,7 +18,11 @@ export function hFragment(vNodes: VNode[]): VNode {
   };
 }
 
-export function h(tag: string, props: Props = {}, children: VNode[] | string[] = []): VNode {
+export function h(
+  tag: string,
+  props: Props = {},
+  children: VNode[] | string[] = []
+): VNode {
   return {
     tag,
     props,
