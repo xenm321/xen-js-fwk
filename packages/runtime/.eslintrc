@@ -12,6 +12,7 @@
   "rules": {
     "comma-dangle": ["warn"],
     "semi": "warn",
-    "no-console": "off"
+    "no-console": "off",
+    "@typescript-eslint/no-explicit-any": ["off"]
   }
 }

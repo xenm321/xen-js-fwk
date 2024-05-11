@@ -1,29 +1,24 @@
 import { withoutNulls } from './utils/arrays';
+import { DomTypes, Props, VNode } from './models/vNode';
 
-export enum DomTypes {
-  TEXT = 'text',
-  ELEMENT = 'element',
-  FRAGMENT = 'fragment',
-}
-
-function mapTextNodes(children) {
+function mapTextNodes(children: VNode[]): VNode[] {
   return children.map((child) =>
     typeof child === 'string' ? hString(child) : child
   );
 }
 
-export function hString(str) {
+export function hString(str: string): VNode {
   return { type: DomTypes.TEXT, value: str };
 }
 
-export function hFragment(vNodes) {
+export function hFragment(vNodes: VNode[]): VNode {
   return {
     type: DomTypes.FRAGMENT,
     children: mapTextNodes(withoutNulls(vNodes))
   };
 }
 
-export function h(tag, props = {}, children = []) {
+export function h(tag: string, props:  Props = {}, children: VNode[] = []): VNode {
   return {
     tag,
     props,
