@@ -23,6 +23,7 @@
     "space-before-blocks": ["warn"],
     "switch-colon-spacing": ["warn"],
     "key-spacing": ["warn"],
-    "no-multi-spaces": ["warn"]
+    "no-multi-spaces": ["warn"],
+    "max-len": ["warn", { "code": 80 }]
   }
 }

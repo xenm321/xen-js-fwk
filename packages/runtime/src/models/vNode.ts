@@ -4,7 +4,7 @@ export enum DomTypes {
   FRAGMENT = 'fragment',
 }
 
-type EventHandlers = Record<string, () => void>;
+export type EventHandlers = Record<string, AnyFunction>;
 
 type PropValue = string | number | EventHandlers;
 
@@ -18,5 +18,7 @@ export interface VNode {
   tag?: string;
   value?: string;
   props?: Props;
+  el?: HTMLElement | Text | null;
+  listeners?: EventHandlers;
   children?: VNode[];
 }
