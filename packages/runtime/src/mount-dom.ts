@@ -1,7 +1,7 @@
-import { DomTypes, Props, VNode } from "./models/vNode";
-import { setAttributes } from "./attributes";
+import { DomTypes, Props, VNode } from './models/vNode';
+import { setAttributes } from './attributes';
 import { addEventListeners } from './events';
-import { Attr } from "./models/attr";
+import { Attr } from './models/attr';
 
 export function mountDOM(vDom: VNode, parentEl: HTMLElement): void {
   switch (vDom.type) {
@@ -44,7 +44,7 @@ function addProps(el: HTMLElement, props: Props, vDom: VNode) {
   vDom.listeners = addEventListeners(events, el);
 
   const convertedAttrs: Attr = {};
-  for (const [ name, value ] of Object.entries(attrs)) {
+  for (const [name, value] of Object.entries(attrs)) {
     if (typeof value === 'string') {
       convertedAttrs[name] = value;
     } else if (typeof value === 'number') {

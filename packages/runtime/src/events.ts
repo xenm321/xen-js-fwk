@@ -15,7 +15,7 @@ export function addEventListeners(
 ): EventHandlers {
   const addedListeners: EventHandlers = {};
 
-  Object.entries(listeners).forEach(([ eventName, handler ]) => {
+  Object.entries(listeners).forEach(([eventName, handler]) => {
     addedListeners[eventName] = addEventListener(eventName, handler, el);
   });
 
@@ -26,7 +26,7 @@ export function removeEventListeners(
   listeners: EventHandlers,
   el: HTMLElement | Text
 ): void {
-  Object.entries(listeners).forEach(([ eventName, handler ]) => {
+  Object.entries(listeners).forEach(([eventName, handler]) => {
     el.removeEventListener(eventName, handler);
   });
 }

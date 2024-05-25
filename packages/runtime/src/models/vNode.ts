@@ -1,7 +1,7 @@
 export enum DomTypes {
   TEXT = 'text',
   ELEMENT = 'element',
-  FRAGMENT = 'fragment',
+  FRAGMENT = 'fragment'
 }
 
 export type EventHandlers = Record<string, AnyFunction>;

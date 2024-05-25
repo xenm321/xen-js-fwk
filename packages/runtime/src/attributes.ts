@@ -49,12 +49,12 @@ export function setAttributes(el: HTMLElement, attrs: Attr): void {
   }
 
   if (style) {
-    Object.entries(style).forEach(([ prop, value ]) => {
+    Object.entries(style).forEach(([prop, value]) => {
       setStyle(el, prop, value);
     });
   }
 
-  for (const [ name, value ] of Object.entries(otherAttrs)) {
+  for (const [name, value] of Object.entries(otherAttrs)) {
     setAttribute(el, name, value);
   }
 }

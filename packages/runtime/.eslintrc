@@ -7,7 +7,8 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
   ],
   "rules": {
     "comma-dangle": ["warn"],
@@ -16,7 +17,6 @@
     "@typescript-eslint/no-explicit-any": ["off"],
     "@typescript-eslint/type-annotation-spacing": "warn",
     "object-curly-spacing": ["warn", "always"],
-    "array-bracket-spacing": ["warn", "always"],
     "keyword-spacing": ["warn"],
     "space-infix-ops": ["warn"],
     "comma-spacing": ["warn"],
