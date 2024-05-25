@@ -1,22 +1,15 @@
 //import { h } from 'https://unpkg.com/xen-js-fwk@1.0.1';
-import { h } from '../../dist/xen-js-fwk.min.js';
+import { h, createApp, hString } from '../../dist/xen-js-fwk.min.js';
 
-function CreateTodo() {
-  return h('div', {}, [
-    h('label', { for: 'todo-input' }, ['New TODO']),
-    h('input', {
-      type: 'text',
-      id: 'todo-input',
-      value: 'placeholder',
-    }),
+createApp({
+  state: 0,
+  reducers: {
+    add: (state, amount) => state + amount,
+  },
+  view: (state, emit) =>
     h(
       'button',
-      {
-        disabled: false,
-      },
-      ['Add']
+      { on: { click: () => emit('add', 1) } },
+      [hString(state)]
     ),
-  ])
-}
-
-console.log(CreateTodo());
+}).mount(document.body)
