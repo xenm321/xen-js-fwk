@@ -4,15 +4,15 @@ export function withoutNulls(arr: any[]): any[] {
   return arr.filter((item) => item != null);
 }
 
-interface IArrayDiff {
-  added: unknown[];
-  removed: unknown[];
+interface IArrayDiff<T = unknown> {
+  added: T[];
+  removed: T[];
 }
 
-export function arraysDiff(
-  oldArray: unknown[],
-  newArray: unknown[]
-): IArrayDiff {
+export function arraysDiff<T = unknown>(
+  oldArray: T[],
+  newArray: T[]
+): IArrayDiff<T> {
   return {
     added: newArray.filter((newItem) => !oldArray.includes(newItem)),
     removed: oldArray.filter((oldItem) => !newArray.includes(oldItem))

@@ -3,18 +3,18 @@ import { setAttributes } from './attributes';
 import { addEventListeners } from './events';
 import { Attr } from './models/attr';
 
-export function mountDOM(vDom: VNode, parentEl: HTMLElement): void {
+export function mountDOM(vDom: VNode, parentEl: HTMLElement, index = -1): void {
   switch (vDom.type) {
     case DomTypes.TEXT:
-      createTextNode(vDom, parentEl);
+      createTextNode(vDom, parentEl, index);
       break;
 
     case DomTypes.ELEMENT:
-      createElementNode(vDom, parentEl);
+      createElementNode(vDom, parentEl, index);
       break;
 
     case DomTypes.FRAGMENT:
-      createFragmentNodes(vDom, parentEl);
+      createFragmentNodes(vDom, parentEl, index);
       break;
 
     default: {
@@ -23,19 +23,27 @@ export function mountDOM(vDom: VNode, parentEl: HTMLElement): void {
   }
 }
 
-function createTextNode(vDom: VNode, parentEl: HTMLElement): void {
+function createTextNode(
+  vDom: VNode,
+  parentEl: HTMLElement,
+  index: number
+): void {
   const { value } = vDom;
 
   const textNode = document.createTextNode(value);
   vDom.el = textNode;
-  parentEl.append(textNode);
+  insert(textNode, parentEl, index);
 }
 
-function createFragmentNodes(vDom: VNode, parentEl: HTMLElement): void {
+function createFragmentNodes(
+  vDom: VNode,
+  parentEl: HTMLElement,
+  index: number
+): void {
   const { children } = vDom;
 
   vDom.el = parentEl;
-  children.forEach((child) => mountDOM(child, parentEl));
+  children.forEach((child, i) => mountDOM(child, parentEl, index + i));
 }
 
 function addProps(el: HTMLElement, props: Props, vDom: VNode) {
@@ -54,13 +62,43 @@ function addProps(el: HTMLElement, props: Props, vDom: VNode) {
   setAttributes(el, convertedAttrs);
 }
 
-function createElementNode(vDom: VNode, parentEl: HTMLElement): void {
+function createElementNode(
+  vDom: VNode,
+  parentEl: HTMLElement,
+  index: number
+): void {
   const { tag, props, children } = vDom;
 
   const element = document.createElement(tag);
   addProps(element, props, vDom);
   vDom.el = element;
 
-  children.forEach((child) => mountDOM(child, element));
-  parentEl.append(element);
+  // NOTE: обратить внимание на undefined
+  // возможно нужно другое значение по умолчанию
+  children.forEach((child, i) =>
+    mountDOM(child, parentEl, index ? index + i : undefined)
+  );
+  insert(element, parentEl, index);
+}
+
+function insert(
+  el: HTMLElement | Text,
+  parentEl: HTMLElement,
+  index: number
+): void {
+  if (index == null) {
+    parentEl.append(el);
+    return;
+  }
+
+  if (index < 0) {
+    throw new Error(`Index must be a positive integer, got ${index}`);
+  }
+
+  const children = parentEl.childNodes;
+  if (index >= children.length) {
+    parentEl.append(el);
+  } else {
+    parentEl.insertBefore(el, children[index]);
+  }
 }

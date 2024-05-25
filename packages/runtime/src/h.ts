@@ -30,3 +30,19 @@ export function h(
     type: DomTypes.ELEMENT
   };
 }
+
+export function extractChildren(vdom: VNode, children: VNode[] = []): VNode[] {
+  if (vdom.children == null) {
+    return [];
+  }
+
+  for (const child of vdom.children) {
+    if (child.type === DomTypes.FRAGMENT) {
+      children.push(...extractChildren(child, children));
+    } else {
+      children.push(child);
+    }
+  }
+
+  return children;
+}

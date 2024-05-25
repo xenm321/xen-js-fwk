@@ -8,6 +8,8 @@ export type EventHandlers = Record<string, AnyFunction>;
 
 type PropValue = string | number | EventHandlers;
 
+export type NodeElType = HTMLElement | Text | null;
+
 export type Props = {
   [k: string]: PropValue;
   on?: EventHandlers;
@@ -18,7 +20,7 @@ export interface VNode {
   tag?: string;
   value?: string;
   props?: Props;
-  el?: HTMLElement | Text | null;
+  el?: NodeElType;
   listeners?: EventHandlers;
   children?: VNode[];
 }

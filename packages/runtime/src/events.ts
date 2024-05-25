@@ -5,8 +5,14 @@ export function addEventListener(
   handler: AnyFunction,
   el: HTMLElement
 ): AnyFunction {
-  el.addEventListener(eventName, handler);
-  return handler;
+  // NOTE: вывести тип
+  function boundHandler(event) {
+    handler(event);
+  }
+
+  el.addEventListener(eventName, boundHandler);
+
+  return boundHandler;
 }
 
 export function addEventListeners(

@@ -7,7 +7,7 @@ export enum ArrayDiffOperationType {
   NOOP = 'noop'
 }
 
-interface ArrayDiffOperation {
+export interface ArrayDiffOperation {
   op: ArrayDiffOperationType;
   index: number;
   originalIndex?: number;
