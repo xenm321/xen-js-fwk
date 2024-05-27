@@ -3,7 +3,11 @@ import { setAttributes } from './attributes';
 import { addEventListeners } from './events';
 import { Attr } from './models/attr';
 
-export function mountDOM(vDom: VNode, parentEl: HTMLElement, index = -1): void {
+export function mountDOM(
+  vDom: VNode,
+  parentEl: HTMLElement,
+  index: Nullable<number> = null
+): void {
   switch (vDom.type) {
     case DomTypes.TEXT:
       createTextNode(vDom, parentEl, index);
@@ -26,7 +30,7 @@ export function mountDOM(vDom: VNode, parentEl: HTMLElement, index = -1): void {
 function createTextNode(
   vDom: VNode,
   parentEl: HTMLElement,
-  index: number
+  index: Nullable<number>
 ): void {
   const { value } = vDom;
 
@@ -38,12 +42,14 @@ function createTextNode(
 function createFragmentNodes(
   vDom: VNode,
   parentEl: HTMLElement,
-  index: number
+  index: Nullable<number>
 ): void {
   const { children } = vDom;
 
   vDom.el = parentEl;
-  children.forEach((child, i) => mountDOM(child, parentEl, index + i));
+  children.forEach((child, i) =>
+    mountDOM(child, parentEl, index ? index + i : null)
+  );
 }
 
 function addProps(el: HTMLElement, props: Props, vDom: VNode) {
@@ -65,7 +71,7 @@ function addProps(el: HTMLElement, props: Props, vDom: VNode) {
 function createElementNode(
   vDom: VNode,
   parentEl: HTMLElement,
-  index: number
+  index: Nullable<number>
 ): void {
   const { tag, props, children } = vDom;
 
@@ -76,7 +82,7 @@ function createElementNode(
   // NOTE: обратить внимание на undefined
   // возможно нужно другое значение по умолчанию
   children.forEach((child, i) =>
-    mountDOM(child, parentEl, index ? index + i : undefined)
+    mountDOM(child, parentEl, index ? index + i : null)
   );
   insert(element, parentEl, index);
 }
@@ -84,9 +90,9 @@ function createElementNode(
 function insert(
   el: HTMLElement | Text,
   parentEl: HTMLElement,
-  index: number
+  index: Nullable<number>
 ): void {
-  if (index == null) {
+  if (index === null) {
     parentEl.append(el);
     return;
   }
