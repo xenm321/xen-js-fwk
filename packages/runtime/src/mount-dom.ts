@@ -79,8 +79,6 @@ function createElementNode(
   addProps(element, props, vDom);
   vDom.el = element;
 
-  // NOTE: обратить внимание на undefined
-  // возможно нужно другое значение по умолчанию
   children.forEach((child, i) =>
     mountDOM(child, parentEl, index ? index + i : null)
   );

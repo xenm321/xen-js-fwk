@@ -6,8 +6,8 @@ export function addEventListener(
   el: HTMLElement
 ): AnyFunction {
   // NOTE: вывести тип
-  function boundHandler(event) {
-    handler(event);
+  function boundHandler(...args: any[]): any {
+    handler(args);
   }
 
   el.addEventListener(eventName, boundHandler);

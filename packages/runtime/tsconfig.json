@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "lib": ["esnext", "dom"],
-    "noImplicitAny": false
+    "target": "ES2022",
+    "noImplicitAny": false,
+    "types": ["vite/client", "vitest/globals", "node"],
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "lib": ["ES2023", "DOM", "DOM.Iterable"]
   }
 }

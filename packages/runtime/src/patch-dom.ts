@@ -17,6 +17,7 @@ import {
 } from './utils/ArrayWithOriginalIndices';
 import { isNotBlankOrEmptyString } from './utils/strings';
 import { addEventListener } from './events';
+import { SimpleAttr } from './models/attr';
 
 export const patchDOM = (
   oldVdom: VNode,
@@ -88,10 +89,8 @@ function patchElement(oldVdom: VNode, newVdom: VNode): void {
 
   const { listeners: oldListeners } = oldVdom;
 
-  // NOTE: нужно проверить работу instanceof
   if (el instanceof HTMLElement) {
-    patchAttrs(el, oldAttrs, newAttrs);
-    // NOTE: уточнить тип oldClass и newClass
+    patchAttrs(el, oldAttrs as SimpleAttr, newAttrs as SimpleAttr);
     patchClasses(
       el,
       oldClass as string[] | string,
@@ -103,8 +102,11 @@ function patchElement(oldVdom: VNode, newVdom: VNode): void {
   }
 }
 
-// NOTE: вывести типы
-function patchAttrs(el: HTMLElement, oldAttrs, newAttrs): void {
+function patchAttrs(
+  el: HTMLElement,
+  oldAttrs: SimpleAttr,
+  newAttrs: SimpleAttr
+): void {
   const { added, removed, updated } = objectsDiff(oldAttrs, newAttrs);
 
   for (const attr of removed) {
@@ -173,7 +175,6 @@ function patchEvents(
   return addedListeners;
 }
 
-// NOTE: разобраться с типизацией
 function patchChildren(oldVdom: VNode, newVdom: VNode): void {
   const oldChildren = extractChildren(oldVdom);
 

@@ -5,3 +5,5 @@ export type Attr = {
   class?: string;
   style?: string;
 };
+
+export type SimpleAttr = { [k: string]: string };
