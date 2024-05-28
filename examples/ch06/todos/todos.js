@@ -1,5 +1,5 @@
 //import { h } from 'https://unpkg.com/xen-js-fwk@1.0.1';
-import { h, createApp, hString } from '../../dist/xen-js-fwk.js';
+import { h, createApp, hString } from '../../dist/xen-js-fwk.js?2';
 
 createApp({
   state: 0,

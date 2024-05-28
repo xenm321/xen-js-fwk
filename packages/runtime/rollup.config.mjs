@@ -22,5 +22,5 @@ export default {
       format: 'esm',
       plugins: [terser(), filesize()],
     },
-  ],
+  ]
 }

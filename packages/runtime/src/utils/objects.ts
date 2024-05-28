@@ -21,3 +21,9 @@ export function objectsDiff(
     )
   };
 }
+
+export function isEmpty(value?: unknown): boolean {
+  if (value == null) return true;
+
+  return Object.keys(value).length === 0;
+}

@@ -2,6 +2,7 @@ import { DomTypes, Props, VNode } from './models/vNode';
 import { setAttributes } from './attributes';
 import { addEventListeners } from './events';
 import { Attr } from './models/attr';
+import { isEmpty } from './utils/objects';
 
 export function mountDOM(
   vDom: VNode,
@@ -55,7 +56,9 @@ function createFragmentNodes(
 function addProps(el: HTMLElement, props: Props, vDom: VNode) {
   const { on: events, ...attrs } = props;
 
-  vDom.listeners = addEventListeners(events, el);
+  if (!isEmpty(events)) {
+    vDom.listeners = addEventListeners(events, el);
+  }
 
   const convertedAttrs: Attr = {};
   for (const [name, value] of Object.entries(attrs)) {
@@ -76,11 +79,13 @@ function createElementNode(
   const { tag, props, children } = vDom;
 
   const element = document.createElement(tag);
-  addProps(element, props, vDom);
+  if (!isEmpty(props)) {
+    addProps(element, props, vDom);
+  }
   vDom.el = element;
 
   children.forEach((child, i) =>
-    mountDOM(child, parentEl, index ? index + i : null)
+    mountDOM(child, element, index ? index + i : null)
   );
   insert(element, parentEl, index);
 }
