@@ -1,5 +1,6 @@
 import { withoutNulls } from './utils/arrays';
 import { DomTypes, Props, VNode } from './models/vNode';
+import { IComponent } from './models/IComponent';
 
 function mapTextNodes(children: VNode[] | string[]): VNode[] {
   return children.map((child: VNode | string) =>
@@ -19,15 +20,18 @@ export function hFragment(vNodes: VNode[]): VNode {
 }
 
 export function h(
-  tag: string,
+  tag: string | IComponent,
   props: Props = {},
   children: VNode[] | string[] = []
 ): VNode {
+  const type: DomTypes =
+    typeof tag === 'string' ? DomTypes.ELEMENT : DomTypes.COMPONENT;
+
   return {
     tag,
     props,
-    children: mapTextNodes(withoutNulls(children)),
-    type: DomTypes.ELEMENT
+    type,
+    children: mapTextNodes(withoutNulls(children))
   };
 }
 

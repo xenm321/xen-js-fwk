@@ -1,7 +1,10 @@
+import { ComponentConstructor, IComponent } from './IComponent';
+
 export enum DomTypes {
   TEXT = 'text',
   ELEMENT = 'element',
-  FRAGMENT = 'fragment'
+  FRAGMENT = 'fragment',
+  COMPONENT = 'component'
 }
 
 export type EventHandlers = Record<string, AnyFunction>;
@@ -17,10 +20,11 @@ export type Props = {
 
 export interface VNode {
   type: DomTypes;
-  tag?: string;
+  tag?: string | ComponentConstructor | IComponent;
   value?: string;
   props?: Props;
   el?: NodeElType;
   listeners?: EventHandlers;
   children?: VNode[];
+  component?: IComponent;
 }

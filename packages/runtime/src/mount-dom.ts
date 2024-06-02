@@ -3,7 +3,8 @@ import { setAttributes } from './attributes';
 import { addEventListeners } from './events';
 import { Attr } from './models/attr';
 import { isEmpty } from './utils/objects';
-import { IComponent } from './models/IComponent';
+import { ComponentConstructor, IComponent } from './models/IComponent';
+import { extractPropsAndEvents } from './utils/props';
 
 export function mountDOM(
   vDom: VNode,
@@ -22,6 +23,10 @@ export function mountDOM(
 
     case DomTypes.FRAGMENT:
       createFragmentNodes(vDom, parentEl, index, hostComponent);
+      break;
+
+    case DomTypes.COMPONENT:
+      createComponentNode(vDom, parentEl, index, hostComponent);
       break;
 
     default: {
@@ -87,15 +92,13 @@ function createElementNode(
 ): void {
   const { tag, props, children } = vDom;
 
-  const element = document.createElement(tag);
+  const element = document.createElement(tag as string);
   if (!isEmpty(props)) {
     addProps(element, props, vDom, hostComponent);
   }
   vDom.el = element;
 
-  children.forEach((child, i) =>
-    mountDOM(child, element, index ? index + i : null, hostComponent)
-  );
+  children.forEach((child) => mountDOM(child, element, null, hostComponent));
   insert(element, parentEl, index);
 }
 
@@ -119,4 +122,20 @@ function insert(
   } else {
     parentEl.insertBefore(el, children[index]);
   }
+}
+
+function createComponentNode(
+  vDom: VNode,
+  parentEl: HTMLElement,
+  index: Nullable<number>,
+  hostComponent: Nullable<IComponent> = null
+): void {
+  const Component = vDom.tag as ComponentConstructor;
+
+  const { props, events } = extractPropsAndEvents(vDom);
+  const component = new Component(props, events, hostComponent);
+
+  component.mount(parentEl, index);
+  vDom.component = component;
+  vDom.el = component.firstElement;
 }

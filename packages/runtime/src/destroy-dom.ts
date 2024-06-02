@@ -14,6 +14,11 @@ export function destroyDOM(vDom: VNode): void {
       removeFragmentNodes(vDom);
       break;
 
+    case DomTypes.COMPONENT: {
+      vDom.component.unmount();
+      break;
+    }
+
     default: {
       throw new Error(`Can't destroy DOM of type: ${type}`);
     }

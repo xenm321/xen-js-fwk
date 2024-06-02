@@ -1,11 +1,12 @@
-import { NodeElType, VNode } from './models/vNode';
+import equal from 'fast-deep-equal';
+import { DomTypes, EventHandlers, NodeElType, VNode } from './models/vNode';
 import { mountDOM } from './mount-dom';
 import { destroyDOM } from './destroy-dom';
 import { patchDOM } from './patch-dom';
 import { extractChildren } from './h';
-import { DomTypes } from './models/vNode';
 import { IComponent } from './models/IComponent';
 import { hasOwnProperty, isEmpty } from './utils/objects';
+import { Dispatcher } from './dispatcher';
 
 interface IDefineComponentParams<State, Props> {
   render: () => VNode;
@@ -17,7 +18,7 @@ export function defineComponent<
   State extends object = any,
   Props extends object = any
 >({ render, state, ...methods }: IDefineComponentParams<State, Props>) {
-  class Component implements IComponent {
+  class Component implements IComponent<Props> {
     #isMounted: boolean = false;
     #vDom: Nullable<VNode> = null;
     #hostEl: Nullable<HTMLElement> = null;
@@ -25,9 +26,20 @@ export function defineComponent<
     state: State;
     props: Readonly<Props>;
 
-    constructor(props?: Readonly<Props>) {
+    #eventHandlers: Nullable<EventHandlers> = null;
+    readonly #parentComponent: Nullable<IComponent> = null;
+    #dispatcher = new Dispatcher();
+    #subscriptions = [];
+
+    constructor(
+      props?: Readonly<Props>,
+      eventHandlers: Nullable<EventHandlers> = {},
+      parentComponent: Nullable<IComponent> = null
+    ) {
       this.props = props ?? ({} as Props);
       this.state = state ? state(props) : ({} as State);
+      this.#eventHandlers = eventHandlers;
+      this.#parentComponent = parentComponent;
     }
 
     get elements(): NodeElType[] {
@@ -36,7 +48,13 @@ export function defineComponent<
       }
 
       if (this.#vDom.type === DomTypes.FRAGMENT) {
-        return extractChildren(this.#vDom).map((child) => child.el);
+        return extractChildren(this.#vDom).flatMap((child) => {
+          if (child.type === DomTypes.COMPONENT) {
+            return child.component.elements;
+          }
+
+          return [child.el];
+        });
       }
       return [this.#vDom.el];
     }
@@ -60,6 +78,16 @@ export function defineComponent<
       this.#patch();
     }
 
+    updateProps(props: Readonly<Props>): void {
+      const newProps = { ...this.props, ...props };
+      if (equal(this.props, newProps)) {
+        return;
+      }
+
+      this.props = newProps;
+      this.#patch();
+    }
+
     render(): VNode {
       return render.call(this);
     }
@@ -71,6 +99,7 @@ export function defineComponent<
 
       this.#vDom = this.render();
       mountDOM(this.#vDom, hostEl, index, this);
+      this.#wireEventHandlers();
 
       this.#hostEl = hostEl;
       this.#isMounted = true;
@@ -82,10 +111,12 @@ export function defineComponent<
       }
 
       destroyDOM(this.#vDom);
+      this.#subscriptions.forEach((unsubscribe) => unsubscribe());
 
       this.#vDom = null;
       this.#hostEl = null;
       this.#isMounted = false;
+      this.#subscriptions = [];
     }
 
     #patch(): void {
@@ -103,6 +134,26 @@ export function defineComponent<
 
     get strHtml(): string {
       return this.#hostEl?.innerHTML ?? '';
+    }
+
+    #wireEventHandlers() {
+      this.#subscriptions = Object.entries(this.#eventHandlers).map(
+        ([eventName, handler]) => this.#wireEventHandler(eventName, handler)
+      );
+    }
+
+    #wireEventHandler(eventName: string, handler: AnyFunction): AnyFunction {
+      return this.#dispatcher.subscribe(eventName, (payload) => {
+        if (this.#parentComponent) {
+          handler.call(this.#parentComponent, payload);
+        } else {
+          handler(payload);
+        }
+      });
+    }
+
+    emit(eventName: string, payload: any): void {
+      this.#dispatcher.dispatch(eventName, payload);
     }
   }
 

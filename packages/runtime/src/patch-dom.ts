@@ -19,6 +19,7 @@ import { isNotBlankOrEmptyString } from './utils/strings';
 import { addEventListener } from './events';
 import { SimpleAttr } from './models/attr';
 import { IComponent } from './models/IComponent';
+import { extractPropsAndEvents } from './utils/props';
 
 export const patchDOM = (
   oldVdom: VNode,
@@ -45,6 +46,11 @@ export const patchDOM = (
 
     case DomTypes.ELEMENT: {
       patchElement(oldVdom, newVdom, hostComponent);
+      break;
+    }
+
+    case DomTypes.COMPONENT: {
+      patchComponent(oldVdom, newVdom);
       break;
     }
   }
@@ -244,4 +250,14 @@ function patchChildren(
       }
     }
   }
+}
+
+function patchComponent(oldVdom: VNode, newVdom: VNode): void {
+  const { component } = oldVdom;
+  const { props } = extractPropsAndEvents(newVdom);
+
+  component.updateProps(props);
+
+  newVdom.component = component;
+  newVdom.el = component.firstElement;
 }
