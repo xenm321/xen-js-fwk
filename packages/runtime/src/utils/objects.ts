@@ -27,3 +27,7 @@ export function isEmpty(value?: unknown): boolean {
 
   return Object.keys(value).length === 0;
 }
+
+export function hasOwnProperty(obj: any, prop: PropertyKey): boolean {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}

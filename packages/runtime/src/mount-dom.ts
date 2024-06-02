@@ -3,11 +3,13 @@ import { setAttributes } from './attributes';
 import { addEventListeners } from './events';
 import { Attr } from './models/attr';
 import { isEmpty } from './utils/objects';
+import { IComponent } from './models/IComponent';
 
 export function mountDOM(
   vDom: VNode,
   parentEl: HTMLElement,
-  index: Nullable<number> = null
+  index: Nullable<number> = null,
+  hostComponent: Nullable<IComponent> = null
 ): void {
   switch (vDom.type) {
     case DomTypes.TEXT:
@@ -15,11 +17,11 @@ export function mountDOM(
       break;
 
     case DomTypes.ELEMENT:
-      createElementNode(vDom, parentEl, index);
+      createElementNode(vDom, parentEl, index, hostComponent);
       break;
 
     case DomTypes.FRAGMENT:
-      createFragmentNodes(vDom, parentEl, index);
+      createFragmentNodes(vDom, parentEl, index, hostComponent);
       break;
 
     default: {
@@ -43,21 +45,27 @@ function createTextNode(
 function createFragmentNodes(
   vDom: VNode,
   parentEl: HTMLElement,
-  index: Nullable<number>
+  index: Nullable<number>,
+  hostComponent: Nullable<IComponent> = null
 ): void {
   const { children } = vDom;
 
   vDom.el = parentEl;
   children.forEach((child, i) =>
-    mountDOM(child, parentEl, index ? index + i : null)
+    mountDOM(child, parentEl, index ? index + i : null, hostComponent)
   );
 }
 
-function addProps(el: HTMLElement, props: Props, vDom: VNode) {
+function addProps(
+  el: HTMLElement,
+  props: Props,
+  vDom: VNode,
+  hostComponent: Nullable<IComponent> = null
+): void {
   const { on: events, ...attrs } = props;
 
   if (!isEmpty(events)) {
-    vDom.listeners = addEventListeners(events, el);
+    vDom.listeners = addEventListeners(events, el, hostComponent);
   }
 
   const convertedAttrs: Attr = {};
@@ -74,18 +82,19 @@ function addProps(el: HTMLElement, props: Props, vDom: VNode) {
 function createElementNode(
   vDom: VNode,
   parentEl: HTMLElement,
-  index: Nullable<number>
+  index: Nullable<number>,
+  hostComponent: Nullable<IComponent> = null
 ): void {
   const { tag, props, children } = vDom;
 
   const element = document.createElement(tag);
   if (!isEmpty(props)) {
-    addProps(element, props, vDom);
+    addProps(element, props, vDom, hostComponent);
   }
   vDom.el = element;
 
   children.forEach((child, i) =>
-    mountDOM(child, element, index ? index + i : null)
+    mountDOM(child, element, index ? index + i : null, hostComponent)
   );
   insert(element, parentEl, index);
 }

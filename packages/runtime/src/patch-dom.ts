@@ -18,17 +18,19 @@ import {
 import { isNotBlankOrEmptyString } from './utils/strings';
 import { addEventListener } from './events';
 import { SimpleAttr } from './models/attr';
+import { IComponent } from './models/IComponent';
 
 export const patchDOM = (
   oldVdom: VNode,
   newVdom: VNode,
-  parentEl: HTMLElement
+  parentEl: HTMLElement,
+  hostComponent: Nullable<IComponent> = null
 ): VNode => {
   if (!areNodesEqual(oldVdom, newVdom)) {
     const index = findIndexInParent(parentEl, oldVdom.el);
 
     destroyDOM(oldVdom);
-    mountDOM(newVdom, parentEl, index);
+    mountDOM(newVdom, parentEl, index, hostComponent);
 
     return newVdom;
   }
@@ -42,12 +44,12 @@ export const patchDOM = (
     }
 
     case DomTypes.ELEMENT: {
-      patchElement(oldVdom, newVdom);
+      patchElement(oldVdom, newVdom, hostComponent);
       break;
     }
   }
 
-  patchChildren(oldVdom, newVdom);
+  patchChildren(oldVdom, newVdom, hostComponent);
 
   return newVdom;
 };
@@ -70,7 +72,11 @@ function patchText(oldVdom: VNode, newVdom: VNode): void {
   }
 }
 
-function patchElement(oldVdom: VNode, newVdom: VNode): void {
+function patchElement(
+  oldVdom: VNode,
+  newVdom: VNode,
+  hostComponent: Nullable<IComponent> = null
+): void {
   const el = oldVdom.el;
 
   const {
@@ -98,7 +104,13 @@ function patchElement(oldVdom: VNode, newVdom: VNode): void {
     );
     patchStyles(el, oldStyle, newStyle);
 
-    newVdom.listeners = patchEvents(el, oldListeners, oldEvents, newEvents);
+    newVdom.listeners = patchEvents(
+      el,
+      oldListeners,
+      oldEvents,
+      newEvents,
+      hostComponent
+    );
   }
 }
 
@@ -156,7 +168,8 @@ function patchEvents(
   el: HTMLElement,
   oldListeners = {},
   oldEvents = {},
-  newEvents = {}
+  newEvents = {},
+  hostComponent: Nullable<IComponent> = null
 ) {
   const { removed, added, updated } = objectsDiff(oldEvents, newEvents);
 
@@ -169,13 +182,18 @@ function patchEvents(
     addedListeners[eventName] = addEventListener(
       eventName,
       newEvents[eventName],
-      el
+      el,
+      hostComponent
     );
   }
   return addedListeners;
 }
 
-function patchChildren(oldVdom: VNode, newVdom: VNode): void {
+function patchChildren(
+  oldVdom: VNode,
+  newVdom: VNode,
+  hostComponent: Nullable<IComponent> = null
+): void {
   const oldChildren = extractChildren(oldVdom);
 
   const newChildren = extractChildren(newVdom);
@@ -189,9 +207,16 @@ function patchChildren(oldVdom: VNode, newVdom: VNode): void {
 
   for (const operation of diffSeq) {
     const { originalIndex, index, item } = operation;
+    const offset = hostComponent?.offset ?? 0;
+
     switch (operation.op) {
       case ArrayDiffOperationType.ADD: {
-        mountDOM(item as VNode, parentEl as HTMLElement, index);
+        mountDOM(
+          item as VNode,
+          parentEl as HTMLElement,
+          index + offset,
+          hostComponent
+        );
         break;
       }
       case ArrayDiffOperationType.REMOVE: {
@@ -202,17 +227,18 @@ function patchChildren(oldVdom: VNode, newVdom: VNode): void {
         const oldChild = oldChildren[originalIndex];
         const newChild = newChildren[index];
         const el = oldChild.el;
-        const elAtTargetIndex = parentEl.childNodes[index];
+        const elAtTargetIndex = parentEl.childNodes[index + offset];
 
         parentEl.insertBefore(el, elAtTargetIndex);
-        patchDOM(oldChild, newChild, parentEl as HTMLElement);
+        patchDOM(oldChild, newChild, parentEl as HTMLElement, hostComponent);
         break;
       }
       case ArrayDiffOperationType.NOOP: {
         patchDOM(
           oldChildren[originalIndex],
           newChildren[index],
-          parentEl as HTMLElement
+          parentEl as HTMLElement,
+          hostComponent
         );
         break;
       }
