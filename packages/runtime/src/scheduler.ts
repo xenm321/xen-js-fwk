@@ -31,3 +31,12 @@ function processJobs(): void {
 
   isScheduled = false;
 }
+
+function flushPromises() {
+  return new Promise((resolve) => setTimeout(resolve));
+}
+
+export function nextTick() {
+  scheduleUpdate();
+  return flushPromises();
+}
