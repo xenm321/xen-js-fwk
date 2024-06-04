@@ -1,4 +1,4 @@
-import { DomTypes, Props, VNode } from './models/vNode';
+import { DomTypes, VNode } from './models/vNode';
 import { setAttributes } from './attributes';
 import { addEventListeners } from './events';
 import { Attr } from './models/attr';
@@ -75,25 +75,26 @@ function createFragmentNodes(
 
 function addProps(
   el: HTMLElement,
-  props: Props,
   vDom: VNode,
   hostComponent: Nullable<IComponent> = null
 ): void {
-  const { on: events, ...attrs } = props;
+  const { props: attrs, events } = extractPropsAndEvents(vDom);
 
   if (!isEmpty(events)) {
     vDom.listeners = addEventListeners(events, el, hostComponent);
   }
 
-  const convertedAttrs: Attr = {};
-  for (const [name, value] of Object.entries(attrs)) {
-    if (typeof value === 'string') {
-      convertedAttrs[name] = value;
-    } else if (typeof value === 'number') {
-      convertedAttrs[name] = value.toString();
+  if (!isEmpty(attrs)) {
+    const convertedAttrs: Attr = {};
+    for (const [name, value] of Object.entries(attrs)) {
+      if (typeof value === 'string') {
+        convertedAttrs[name] = value;
+      } else if (typeof value === 'number') {
+        convertedAttrs[name] = value.toString();
+      }
     }
+    setAttributes(el, convertedAttrs);
   }
-  setAttributes(el, convertedAttrs);
 }
 
 function createElementNode(
@@ -102,12 +103,10 @@ function createElementNode(
   index: Nullable<number>,
   hostComponent: Nullable<IComponent> = null
 ): void {
-  const { tag, props, children } = vDom;
+  const { tag, children } = vDom;
 
   const element = document.createElement(tag as string);
-  if (!isEmpty(props)) {
-    addProps(element, props, vDom, hostComponent);
-  }
+  addProps(element, vDom, hostComponent);
   vDom.el = element;
 
   children.forEach((child) => mountDOM(child, element, null, hostComponent));

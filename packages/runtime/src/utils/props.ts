@@ -5,5 +5,7 @@ export function extractPropsAndEvents(vDom: VNode): {
   events: EventHandlers;
 } {
   const { on: events = {}, ...props } = vDom.props;
+  delete props.key;
+
   return { props, events };
 }
