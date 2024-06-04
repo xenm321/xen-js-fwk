@@ -54,11 +54,23 @@ function createFragmentNodes(
   hostComponent: Nullable<IComponent> = null
 ): void {
   const { children } = vDom;
-
   vDom.el = parentEl;
-  children.forEach((child, i) =>
-    mountDOM(child, parentEl, index ? index + i : null, hostComponent)
-  );
+
+  for (const child of children) {
+    mountDOM(child, parentEl, index, hostComponent);
+
+    if (index == null) {
+      continue;
+    }
+
+    switch (child.type) {
+      case DomTypes.FRAGMENT:
+        index += child.children.length;
+        break;
+      default:
+        index++;
+    }
+  }
 }
 
 function addProps(
