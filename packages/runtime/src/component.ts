@@ -11,13 +11,23 @@ import { Dispatcher } from './dispatcher';
 interface IDefineComponentParams<State, Props> {
   render: () => VNode;
   state?: (props: Props) => State;
+  onMounted?: () => void;
+  onUnmounted?: () => void;
   [key: string]: AnyFunction;
 }
+
+const emptyFn = (): void => {};
 
 export function defineComponent<
   State extends object = any,
   Props extends object = any
->({ render, state, ...methods }: IDefineComponentParams<State, Props>) {
+>({
+  render,
+  state,
+  onMounted = emptyFn,
+  onUnmounted = emptyFn,
+  ...methods
+}: IDefineComponentParams<State, Props>) {
   class Component implements IComponent<Props> {
     #isMounted: boolean = false;
     #vDom: Nullable<VNode> = null;
@@ -40,6 +50,14 @@ export function defineComponent<
       this.state = state ? state(props) : ({} as State);
       this.#eventHandlers = eventHandlers;
       this.#parentComponent = parentComponent;
+    }
+
+    onMounted(): Promise<any> {
+      return Promise.resolve(onMounted.call(this));
+    }
+
+    onUnmounted(): Promise<any> {
+      return Promise.resolve(onUnmounted.call(this));
     }
 
     get elements(): NodeElType[] {

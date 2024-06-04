@@ -18,4 +18,7 @@ export interface IComponent<Props = any> {
   unmount(): void;
 
   updateProps(props: Readonly<Props>): void;
+
+  onMounted: () => Promise<any>;
+  onUnmounted: () => Promise<any>;
 }

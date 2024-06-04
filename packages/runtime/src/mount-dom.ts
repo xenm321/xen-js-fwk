@@ -5,6 +5,7 @@ import { Attr } from './models/attr';
 import { isEmpty } from './utils/objects';
 import { ComponentConstructor, IComponent } from './models/IComponent';
 import { extractPropsAndEvents } from './utils/props';
+import { enqueueJob } from './scheduler';
 
 export function mountDOM(
   vDom: VNode,
@@ -27,6 +28,7 @@ export function mountDOM(
 
     case DomTypes.COMPONENT:
       createComponentNode(vDom, parentEl, index, hostComponent);
+      enqueueJob(() => vDom.component.onMounted());
       break;
 
     default: {
