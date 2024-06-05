@@ -3,9 +3,10 @@ import { setAttributes } from './attributes';
 import { addEventListeners } from './events';
 import { Attr } from './models/attr';
 import { isEmpty } from './utils/objects';
-import { ComponentConstructor, IComponent } from './models/IComponent';
+import { IComponent } from './models/IComponent';
 import { extractPropsAndEvents } from './utils/props';
 import { enqueueJob } from './scheduler';
+import { ComponentProps } from './component';
 
 export function mountDOM(
   vDom: VNode,
@@ -143,7 +144,7 @@ function createComponentNode(
   index: Nullable<number>,
   hostComponent: Nullable<IComponent> = null
 ): void {
-  const Component = vDom.tag as ComponentConstructor;
+  const Component = vDom.tag as Class<IComponent, ComponentProps>;
 
   const { props, events } = extractPropsAndEvents(vDom);
   const component = new Component(props, events, hostComponent);

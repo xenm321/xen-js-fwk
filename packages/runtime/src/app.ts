@@ -4,7 +4,7 @@ import { VNode } from './models/vNode';
 import { h } from './h';
 import { IComponent } from './models/IComponent';
 
-export function createApp(RootComponent: IComponent, props = {}) {
+export function createApp(RootComponent: Class<IComponent>, props = {}) {
   let parentEl: Nullable<HTMLElement> = null;
   let isMounted: boolean = false;
   let vdom: Nullable<VNode> = null;

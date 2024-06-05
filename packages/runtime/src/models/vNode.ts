@@ -1,4 +1,4 @@
-import { ComponentConstructor, IComponent } from './IComponent';
+import { IComponent } from './IComponent';
 
 export enum DomTypes {
   TEXT = 'text',
@@ -20,7 +20,7 @@ export type Props = {
 
 export interface VNode {
   type: DomTypes;
-  tag?: string | ComponentConstructor | IComponent;
+  tag?: string | Class<IComponent>;
   value?: string;
   props?: Props;
   el?: NodeElType;

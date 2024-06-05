@@ -18,6 +18,12 @@ interface IDefineComponentParams<State, Props> {
 
 const emptyFn = (): void => {};
 
+export type ComponentProps = [
+  Readonly<any>,
+  Nullable<EventHandlers>,
+  Nullable<IComponent>
+];
+
 export function defineComponent<
   State extends object = any,
   Props extends object = any

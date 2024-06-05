@@ -1,12 +1,6 @@
-import { EventHandlers, NodeElType } from './vNode';
+import { NodeElType } from './vNode';
 
-export type ComponentConstructor = new (
-  props: Readonly<any>,
-  eventHandlers: Nullable<EventHandlers>,
-  parentComponent: Nullable<IComponent>
-) => IComponent<Readonly<any>>;
-
-export interface IComponent<Props = any> {
+export interface IComponent<Props = Readonly<any>> {
   offset: number;
 
   elements: NodeElType[];

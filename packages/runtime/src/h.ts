@@ -20,7 +20,7 @@ export function hFragment(vNodes: VNode[]): VNode {
 }
 
 export function h(
-  tag: string | IComponent,
+  tag: string | Class<IComponent>,
   props: Props = {},
   children: VNode[] | string[] = []
 ): VNode {
