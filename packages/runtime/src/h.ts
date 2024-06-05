@@ -50,3 +50,18 @@ export function extractChildren(vdom: VNode, children: VNode[] = []): VNode[] {
 
   return children;
 }
+
+let hSlotCalled: boolean = false;
+
+export function didCreateSlot(): boolean {
+  return hSlotCalled;
+}
+
+export function resetDidCreateSlot(): void {
+  hSlotCalled = false;
+}
+
+export function hSlot(children: VNode[] = []): VNode {
+  hSlotCalled = true;
+  return { type: DomTypes.SLOT, children };
+}

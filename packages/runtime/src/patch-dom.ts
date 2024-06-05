@@ -256,6 +256,7 @@ function patchComponent(oldVdom: VNode, newVdom: VNode): void {
   const { component } = oldVdom;
   const { props } = extractPropsAndEvents(newVdom);
 
+  component.setExternalContent(newVdom.children);
   component.updateProps(props);
 
   newVdom.component = component;

@@ -3,10 +3,11 @@ import { DomTypes, EventHandlers, NodeElType, VNode } from './models/vNode';
 import { mountDOM } from './mount-dom';
 import { destroyDOM } from './destroy-dom';
 import { patchDOM } from './patch-dom';
-import { extractChildren } from './h';
+import { extractChildren, didCreateSlot, resetDidCreateSlot } from './h';
 import { IComponent } from './models/IComponent';
 import { hasOwnProperty, isEmpty } from './utils/objects';
 import { Dispatcher } from './dispatcher';
+import { fillSlots } from './slots';
 
 interface IDefineComponentParams<State, Props> {
   render: () => VNode;
@@ -45,7 +46,9 @@ export function defineComponent<
     #eventHandlers: Nullable<EventHandlers> = null;
     readonly #parentComponent: Nullable<IComponent> = null;
     #dispatcher = new Dispatcher();
-    #subscriptions = [];
+    #subscriptions: AnyFunction[] = [];
+
+    #children: VNode[] = [];
 
     constructor(
       props?: Readonly<Props>,
@@ -113,7 +116,14 @@ export function defineComponent<
     }
 
     render(): VNode {
-      return render.call(this);
+      const vdom = render.call(this);
+
+      if (didCreateSlot()) {
+        fillSlots(vdom, this.#children);
+        resetDidCreateSlot();
+      }
+
+      return vdom;
     }
 
     mount(hostEl: HTMLElement, index: Nullable<number> = null): void {
@@ -141,6 +151,10 @@ export function defineComponent<
       this.#hostEl = null;
       this.#isMounted = false;
       this.#subscriptions = [];
+    }
+
+    setExternalContent(children: VNode[]): void {
+      this.#children = children;
     }
 
     #patch(): void {

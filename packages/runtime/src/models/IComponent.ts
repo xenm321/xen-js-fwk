@@ -1,4 +1,4 @@
-import { NodeElType } from './vNode';
+import { NodeElType, VNode } from './vNode';
 
 export interface IComponent<Props = Readonly<any>> {
   offset: number;
@@ -14,5 +14,8 @@ export interface IComponent<Props = Readonly<any>> {
   updateProps(props: Readonly<Props>): void;
 
   onMounted: () => Promise<any>;
+
   onUnmounted: () => Promise<any>;
+
+  setExternalContent(nodes: VNode[]): void;
 }
